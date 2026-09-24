@@ -1,0 +1,5 @@
+outs:
+- md5: 4541110b4d2febd568f91da0d24e73cd
+  size: 3064969
+  hash: md5
+  path: olist_test.pkl

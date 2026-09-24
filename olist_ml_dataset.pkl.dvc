@@ -1,0 +1,5 @@
+outs:
+- md5: 435a7186793879f5f7bfce4409fcce33
+  size: 34334690
+  hash: md5
+  path: olist_ml_dataset.pkl

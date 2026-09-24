@@ -1,0 +1,5 @@
+outs:
+- md5: eea7278c7e9dbf7e9824b48ef6977c80
+  size: 23385787
+  hash: md5
+  path: olist_train.pkl

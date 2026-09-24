@@ -1,0 +1,26 @@
+.git
+.github
+.venv
+__pycache__
+*.py[cod]
+.pytest_cache
+.ruff_cache
+.dvc
+.dvcignore
+
+*.ipynb
+notebooks/
+eda_plots/
+mlruns/
+*.pkl
+*.parquet
+
+logs/
+data/
+models/
+*.docx
+
+# secrets
+.env
+.env.*
+!.env.example

@@ -1,0 +1,51 @@
+# thresholds mirror config/config.yaml's monitoring: section
+groups:
+  - name: olist-inference
+    rules:
+      - alert: OlistInferenceServiceDown
+        expr: up{job="olist-api"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Olist inference API is unreachable"
+          description: "/metrics hasn't been scraped in 1 minute - service is down."
+
+      - alert: OlistInferenceHighErrorRate
+        expr: >-
+          sum(rate(inference_requests_total{status="error"}[5m]))
+          /
+          sum(rate(inference_requests_total[5m])) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "More than 5% of prediction requests are failing"
+          description: >-
+            Check inference_errors_total by `kind` for the failure mode, then
+            logs/inference.log for details.
+
+      - alert: OlistInferenceHighLatency
+        expr: >-
+          histogram_quantile(0.95, sum(rate(inference_latency_seconds_bucket[5m])) by (le))
+          > 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "P95 prediction latency is above 1 second"
+          description: "95% of requests over the last 5 minutes took longer than 1s."
+
+      - alert: OlistInferencePredictionClassSkew
+        expr: >-
+          sum(rate(inference_predictions_total{label="delayed"}[1h]))
+          /
+          sum(rate(inference_predictions_total[1h])) > 0.5
+        for: 30m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Predicted delay rate is well above the ~8% training base rate"
+          description: >-
+            Cheap proxy for input drift - not a real feature-distribution check.
+            Investigate before trusting predictions during the alert.

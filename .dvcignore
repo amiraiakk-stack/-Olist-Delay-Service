@@ -1,0 +1,7 @@
+*.ipynb
+eda_plots/
+logs/
+mlruns/
+__pycache__/
+.pytest_cache/
+.ruff_cache/

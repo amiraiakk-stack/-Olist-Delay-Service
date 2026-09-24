@@ -1,0 +1,60 @@
+service:
+  name: olist-delay-inference
+  model_version: "1.0.0"
+  log_level: INFO
+  log_file: logs/inference.log
+  prediction_log_file: logs/predictions.jsonl
+  max_batch_size: 1000
+model:
+  source: local  # or "mlflow" to load the registered model below instead
+  artifacts_dir: saved_artifacts
+  model_file: final_best_model.joblib
+  feature_names_file: feature_names.joblib
+  num_imputer_file: num_imputer.joblib
+  cat_imputer_file: cat_imputer.joblib
+  encoder_file: ohe_encoder.joblib
+  scaler_file: scaler.joblib
+  mlflow_tracking_uri: http://mlflow:5000
+  mlflow_registered_model_name: olist-delay-classifier
+  mlflow_model_alias: champion
+data:
+  required_columns:
+    - total_price
+    - total_freight
+    - items_count
+    - unique_products
+    - unique_sellers
+    - total_payment_value
+    - max_payment_installments
+    - payment_types_count
+    - customer_state
+    - primary_payment_type
+    - order_purchase_timestamp
+    - order_estimated_delivery_date
+  numeric_ranges:
+    total_price: [0, 1000000]
+    total_freight: [0, 1000000]
+    items_count: [0, 1000]
+    unique_products: [0, 1000]
+    unique_sellers: [0, 1000]
+    total_payment_value: [0, 1000000]
+    max_payment_installments: [0, 100]
+    payment_types_count: [0, 100]
+  column_types:
+    total_price: float64
+    total_freight: float64
+    items_count: int64
+    unique_products: int64
+    unique_sellers: int64
+    total_payment_value: float64
+    max_payment_installments: int64
+    payment_types_count: int64
+    customer_state: str
+    primary_payment_type: str
+  categorical_values:
+    customer_state: [AC, AL, AM, AP, BA, CE, DF, ES, GO, MA, MG, MS, MT, PA, PB, PE, PI, PR, RJ, RN, RO, RR, RS, SC, SE, SP, TO]
+    primary_payment_type: [credit_card, boleto, voucher, debit_card, not_defined]
+  max_missing_ratio: 0.5
+monitoring:
+  latency_warning_ms: 1000
+  error_rate_warning: 0.05

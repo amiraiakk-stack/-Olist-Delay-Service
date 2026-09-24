@@ -1,0 +1,15 @@
+{
+  "order_id": "ord-2018-0001",
+  "total_price": 100.0,
+  "total_freight": 10.0,
+  "items_count": 1,
+  "unique_products": 1,
+  "unique_sellers": 1,
+  "total_payment_value": 110.0,
+  "max_payment_installments": 1,
+  "payment_types_count": 1,
+  "customer_state": "SP",
+  "primary_payment_type": "credit_card",
+  "order_purchase_timestamp": "2018-01-01T10:00:00",
+  "order_estimated_delivery_date": "2018-01-10T10:00:00"
+}

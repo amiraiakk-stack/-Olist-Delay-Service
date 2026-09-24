@@ -1,0 +1,69 @@
+services:
+  # one-shot: fits a placeholder model so `api` has something to load on a clean machine.
+  # NOT a real model - see scripts/build_fixture_artifacts.py.
+  fixture-artifacts:
+    build: .
+    command: ["python", "-m", "scripts.build_fixture_artifacts", "--artifacts-dir", "/artifacts"]
+    volumes:
+      - model_artifacts:/artifacts
+
+  api:
+    build: .
+    environment:
+      INFERENCE_CONFIG: /service/config/config.yaml
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+    ports:
+      - "8000:8000"
+    volumes:
+      - prediction_logs:/service/logs
+      - model_artifacts:/service/saved_artifacts
+    depends_on:
+      mlflow:
+        condition: service_started
+      fixture-artifacts:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: mlflow
+      POSTGRES_USER: ${POSTGRES_USER:-mlflow}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  mlflow:
+    build:
+      context: .
+      dockerfile: Dockerfile.mlflow
+    command: mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri postgresql+psycopg2://${POSTGRES_USER:-mlflow}:${POSTGRES_PASSWORD:-change-me}@postgres:5432/mlflow --default-artifact-root /mlartifacts
+    ports:
+      - "5000:5000"
+    volumes:
+      - mlflow_artifacts:/mlartifacts
+    depends_on:
+      - postgres
+
+  # scrapes api/metrics, evaluates monitoring/alerts.yml (no Alertmanager route wired up yet)
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/alerts.yml:/etc/prometheus/alerts.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    depends_on:
+      - api
+
+volumes:
+  prediction_logs:
+  postgres_data:
+  mlflow_artifacts:
+  model_artifacts:
+  prometheus_data:

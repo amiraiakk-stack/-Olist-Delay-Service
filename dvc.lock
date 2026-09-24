@@ -1,0 +1,39 @@
+schema: '2.0'
+stages:
+  train:
+    cmd: python -m scripts.train_pipeline --artifacts-dir saved_artifacts
+    deps:
+    - path: scripts/train_pipeline.py
+      hash: md5
+      md5: 6c77797c6a0b550d8d231e3bcd020a81
+      size: 1861
+    - path: src/data_extraction.py
+      hash: md5
+      md5: 761884ce3a9480344f0b6581d2e5f240
+      size: 2998
+    - path: src/features.py
+      hash: md5
+      md5: f1167a556594dcc713bf22ff6ea14f04
+      size: 2027
+    - path: src/labeling.py
+      hash: md5
+      md5: 97b4bfcc4bf7265837f42fe106bfcb83
+      size: 957
+    - path: src/preprocessing.py
+      hash: md5
+      md5: b7df2a3c92fa102972b0e98e2175367f
+      size: 4101
+    - path: src/splitting.py
+      hash: md5
+      md5: e2a1f5dfc6b2b4150614ca739db93e04
+      size: 750
+    - path: src/training.py
+      hash: md5
+      md5: 2bc64834ce92d3966ab90f54a998b9cb
+      size: 6494
+    outs:
+    - path: saved_artifacts
+      hash: md5
+      md5: 12619dc8e6ae182b5c8de231104fe986.dir
+      size: 37413203
+      nfiles: 10

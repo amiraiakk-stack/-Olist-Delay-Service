@@ -1,0 +1,5 @@
+outs:
+- md5: a01023105cc1a641fbe0b12e28b36813
+  size: 28973561
+  hash: md5
+  path: olist_labeled_dataset.pkl

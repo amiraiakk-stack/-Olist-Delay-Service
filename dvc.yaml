@@ -1,0 +1,13 @@
+stages:
+  train:
+    cmd: python -m scripts.train_pipeline --artifacts-dir saved_artifacts
+    deps:
+      - scripts/train_pipeline.py
+      - src/data_extraction.py
+      - src/labeling.py
+      - src/splitting.py
+      - src/features.py
+      - src/preprocessing.py
+      - src/training.py
+    outs:
+      - saved_artifacts
